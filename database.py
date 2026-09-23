@@ -31,7 +31,7 @@ def create_tables(connection):
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
         category TEXT,
-        is_available INTEGER)
+        is_available INTEGER )
      
     """)
 
@@ -43,7 +43,7 @@ def create_tables(connection):
         equipment_id INTEGER,
         checkout_date TEXT,
         due_date TEXT,
-        return_date TEXT
+        return_date TEXT )
          
         """)
 

@@ -57,4 +57,5 @@ class Loan:
             status = "OVERDUE"
         else:
             status = "Active"
+        print()    
         return f"Loan NO: {self.id} - Due to: {self.due_date} - {status}"
