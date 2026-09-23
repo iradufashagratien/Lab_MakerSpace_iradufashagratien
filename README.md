@@ -79,7 +79,7 @@ The SQLite database file is stored as `makerspace.db` in the project directory. 
 
 ## AI Usage
 
-AI tools were used to help with this project in the following ways:
+I used AI tools such as ChatGPT and Claude to help me with this project in the following ways:
 - explaining coding errors and debugging issues
 - discussing design options for the database and class structure
 - improving clarity of documentation and project organisation
