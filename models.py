@@ -17,16 +17,13 @@ class Equipment:
         self.id = id
         self.name = name
         self.category = category
-
     # SQLite gives us 1 or 0, we turn it into True/False here
-
         self.is_available = bool(is_available)
 
 
     def display(self):
         status = "Available" if self.is_available else "On Loan"
         return f"[{self.id}] {self.name} ({self.category}) - {status}"
-
     
 class Loan:
 

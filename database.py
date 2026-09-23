@@ -7,8 +7,8 @@ DB_NAME = "makerspace.db"
 def get_connection():
 
     # This function creates and opens the database file and gives us the connection.
-
     connection = sqlite3.connect(DB_NAME)
+    connection.execute("PRAGMA foreign_keys = ON")  # Enable foreign key support    
     return connection
 
 def create_tables(connection):
@@ -20,8 +20,8 @@ def create_tables(connection):
 
         CREATE TABLE IF NOT EXISTS members (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        email TEXT) 
+        name TEXT NOT NULL,
+        email TEXT NOT NULL) 
     
     """)
 
@@ -29,9 +29,9 @@ def create_tables(connection):
 
         CREATE TABLE IF NOT EXISTS equipment (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        category TEXT,
-        is_available INTEGER )
+        name TEXT NOT NULL,
+        category TEXT NOT NULL,
+        is_available INTEGER NOT NULL DEFAULT 1)
      
     """)
 
@@ -39,14 +39,24 @@ def create_tables(connection):
         
         CREATE TABLE IF NOT EXISTS loans (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        member_id INTEGER,
-        equipment_id INTEGER,
+        member_id INTEGER NOT NULL,
+        equipment_id INTEGER NOT NULL,
         checkout_date TEXT,
         due_date TEXT,
-        return_date TEXT )
-         
-        """)
-
+        return_date TEXT, 
+        FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE,
+        FOREIGN KEY (equipment_id) REFERENCES equipment(id) ON DELETE CASCADE
+        )
+    """)
+    connection.execute("""
+        CREATE TRIGGER IF NOT EXISTS mark_equipment_available_after_loan_delete
+        AFTER DELETE ON loans
+        BEGIN
+            UPDATE equipment
+            SET is_available = 1
+            WHERE id = OLD.equipment_id;
+        END;
+    """)
     # Commit() the changes to the database to make sure the tables are created.
     connection.commit()
 
@@ -100,6 +110,8 @@ def update_member(connection, member_id, name, email):
 
 
 #Function to delete a member from the members table based on their ID.
+# Because loans reference members with ON DELETE CASCADE,
+# any loan records linked to that member are deleted automatically.
 
 def delete_member(connection, member_id):
     connection.execute(

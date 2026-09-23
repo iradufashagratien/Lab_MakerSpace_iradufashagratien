@@ -1,6 +1,7 @@
 import database
 import models
 import services
+import validation
 from datetime import date
 
 
@@ -8,11 +9,8 @@ from datetime import date
 # ======================================= MEMBER MANAGEMENT ===============================
 
 def register_member(connection):
-    name = input("Enter member name: ")
-    if name == "":
-        print("Name cannot be empty.")
-        return
-    email = input("Enter member email: ")
+    name = validation.get_valid_name("Enter member name: ")
+    email = validation.get_valid_email("Enter member email: ")
     database.add_member(connection, name, email)
     print()
     print("Member registered!")
@@ -24,21 +22,16 @@ def list_members(connection):
         print()
         print("No members yet!. Please make sure to register a member first.")
         return
+    print("This is the list of all members in the database and their email addresses:")
     for row in rows:
         # Each row looks like (id, name, email). We turn it into a Member object.
         member = models.Member(row[0], row[1], row[2])
-        print("This is the list of all members in the database and their email addresses:")
-        print()
         print(member.display())
 
 
+
 def update_member(connection):
-    text_id = input("Enter member ID to update: ")
-    if not text_id.isdigit():
-        print()
-        print("Please enter a valid number.")
-        return
-    member_id = int(text_id)
+    member_id = validation.get_valid_id("Enter member ID to update: ")
 
     existing = database.get_member_by_id(connection, member_id)
     if existing is None:
@@ -46,20 +39,15 @@ def update_member(connection):
         print("No member found with that ID.")
         return
 
-    new_name = input("Enter new name: ")
-    new_email = input("Enter new email: ")
+    new_name = validation.get_valid_name("Enter new name: ")
+    new_email = validation.get_valid_email("Enter new email: ")
     database.update_member(connection, member_id, new_name, new_email)
     print()
     print("Member updated!")
 
 
 def delete_member(connection):
-    text_id = input("Enter member ID to delete: ")
-    if not text_id.isdigit():
-        print()
-        print("Please enter a valid number.")
-        return
-    member_id = int(text_id)
+    member_id = validation.get_valid_id("Enter member ID to delete: ")
 
     existing = database.get_member_by_id(connection, member_id)
     if existing is None:
@@ -77,7 +65,7 @@ def search_member(connection):
     choice = input("Choose: ")
 
     if choice == "1":
-        keyword = input("Enter name to search: ")
+        keyword = validation.get_valid_text("Enter name to search: ", "Invalid name. Please enter letters only.")
         rows = database.search_members_by_name(connection, keyword)
         if len(rows) == 0:
             print()
@@ -87,12 +75,8 @@ def search_member(connection):
             print(member.display())
 
     elif choice == "2":
-        text_id = input("Enter member ID: ")
-        if not text_id.isdigit():
-            print()
-            print("Please enter a valid number.")
-            return
-        row = database.get_member_by_id(connection, int(text_id))
+        member_id = validation.get_valid_id("Enter member ID: ")
+        row = database.get_member_by_id(connection, member_id)
         if row is None:
             print()
             print("No member found with that ID.")
@@ -118,6 +102,8 @@ def member_menu(connection):
         print("0. Back to main menu")
         print() 
         choice = input("Choose an option: ")
+        print()
+
 
         if choice == "1":
             register_member(connection)
@@ -141,13 +127,10 @@ def member_menu(connection):
 # =========================== EQUIPMENT MANAGEMENT =================================
 
 def register_equipment(connection):
-    name = input("Enter equipment name: ")
-    if name == "":
-        print()
-        print("Name cannot be empty.")
-        return
-    category = input("Enter category: ")
+    name = validation.get_valid_text("Enter equipment name: ", "Invalid equipment name. Please enter letters only.")
+    category = validation.get_valid_text("Enter category: ", "Invalid category. Please enter letters only.")
     database.add_equipment(connection, name, category)
+    print()
     print("Equipment registered!")
 
 
@@ -157,21 +140,15 @@ def list_equipment(connection):
         print()
         print("No equipment yet. Please make sure to register equipment first.")
         return
+
+    print("This is the list of all equipment in the database and their availability status:")
     for row in rows:
         # Each row looks like (id, name, category, is_available)
         item = models.Equipment(row[0], row[1], row[2], row[3])
-        print("This is the list of all equipment in the database and their availability status:")
-        print()
         print(item.display())
 
-
 def update_equipment(connection):
-    text_id = input("Enter equipment ID to update: ")
-    if not text_id.isdigit():
-        print()
-        print("Please enter a valid number.")
-        return
-    equipment_id = int(text_id)
+    equipment_id = validation.get_valid_id("Enter equipment ID to update: ")
 
     existing = database.get_equipment_by_id(connection, equipment_id)
     if existing is None:
@@ -179,20 +156,15 @@ def update_equipment(connection):
         print("No equipment found with that ID.")
         return
 
-    new_name = input("Enter new name: ")
-    new_category = input("Enter new category: ")
+    new_name = validation.get_valid_text("Enter new name: ", "Invalid equipment name. Please enter letters only.")
+    new_category = validation.get_valid_text("Enter new category: ", "Invalid category. Please enter letters only.")
     database.update_equipment(connection, equipment_id, new_name, new_category)
     print()
     print("Equipment updated!")
 
 
 def delete_equipment(connection):
-    text_id = input("Enter equipment ID to delete: ")
-    if not text_id.isdigit():
-        print()
-        print("Please enter a valid number.")
-        return
-    equipment_id = int(text_id)
+    equipment_id = validation.get_valid_id("Enter equipment ID to delete: ")
 
     existing = database.get_equipment_by_id(connection, equipment_id)
     if existing is None:
@@ -210,7 +182,7 @@ def search_equipment(connection):
     choice = input("Choose: ")
 
     if choice == "1":
-        keyword = input("Enter equipment name to search: ")
+        keyword = validation.get_valid_text("Enter equipment name to search: ", "Invalid equipment name. Please enter letters only.")
         rows = database.search_equipment_by_name(connection, keyword)
         if len(rows) == 0:
             print()
@@ -221,12 +193,8 @@ def search_equipment(connection):
             print(item.display())
 
     elif choice == "2":
-        text_id = input("Enter equipment ID: ")
-        if not text_id.isdigit():
-            print()
-            print("Please enter a valid number.")
-            return
-        row = database.get_equipment_by_id(connection, int(text_id))
+        equipment_id = validation.get_valid_id("Enter equipment ID: ")
+        row = database.get_equipment_by_id(connection, equipment_id)
         if row is None:
             print()
             print("No equipment found with that ID.")
@@ -275,16 +243,8 @@ def equipment_menu(connection):
 # (This part now calls services.py instead of doing the checking itself)
 
 def checkout_equipment(connection):
-    text_member_id = input("Enter member ID: ")
-    text_equipment_id = input("Enter equipment ID: ")
-
-    if not text_member_id.isdigit() or not text_equipment_id.isdigit():
-        print()
-        print("IDs must be numbers.")
-        return
-
-    member_id = int(text_member_id)
-    equipment_id = int(text_equipment_id)
+    member_id = validation.get_valid_id("Enter member ID: ")
+    equipment_id = validation.get_valid_id("Enter equipment ID: ")
 
     # services.checkout() does all the checking and the database work,
     # and just hands us back a message to show the user.
@@ -294,12 +254,7 @@ def checkout_equipment(connection):
 
 
 def return_equipment(connection):
-    text_loan_id = input("Enter loan ID to return: ")
-    if not text_loan_id.isdigit():
-        print()
-        print("Please enter a valid number.")
-        return
-    loan_id = int(text_loan_id)
+    loan_id = validation.get_valid_id("Enter loan ID to return: ")
 
     message = services.return_item(connection, loan_id)
     print(message)
@@ -338,9 +293,9 @@ def reports_menu(connection):
         print("2. Overdue loans")
         print("0. Back to main menu")
         print()
-
+        
         choice = input("Choose an option: ")
-
+        
         if choice == "1":
             rows = database.report_active_loans(connection)
             if len(rows) == 0:
@@ -385,6 +340,7 @@ def main():
         print("4. Reports")
         print("0. Exit")
         print()
+
 
         choice = input("Choose an option: ")
 
