@@ -1,8 +1,6 @@
-An individual Object-Oriented Python CLI application, backed by SQLite,
-built for the "Introduction to Programming and Databases" summative
-assessment. It lets a makerspace operator manage members, equipment,
-and loans through a menu-driven interface, with all data persisted in
-a local SQLite database file between runs.
+# Campus MakerSpace Checkout System
+
+This project is a Python command-line application for managing a campus makerspace checkout system. It allows staff/operators to manage members, equipment inventory, loans, validation, and reports using SQLite as the database backend.
 
 ## What This System Does
 
@@ -133,5 +131,15 @@ learning and debugging aids, specifically to:
 - Discuss design options for the database schema and class structure
 - Improve the clarity of documentation and project organisation
 
-All code was written and is understood by me, and I am able to
-explain any part of it during the live demonstration.
+This support helped improve the quality of the implementation and made the project easier to understand and maintain.
+
+## Notes
+
+This project is designed as a beginner-friendly CLI application and follows a simple layered structure:
+- menu and user interaction in `main.py`
+- object models in `models.py`
+- data access in `database.py`
+- business logic in `services.py`
+- input validation in `validation.py`
+
+This keeps the code organised and easier to explain during live demonstration.
