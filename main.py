@@ -304,7 +304,7 @@ def reports_menu(connection):
             for row in rows:
                 # row looks like (loan_id, member_name, equipment_name, due_date)
                 print()
-                print(f"Loan #{row[0]}: {row[1]} has {row[2]}, due {row[3]}")
+                print(f"Loan #{row[0]}: {row[1]} has {row[2]}, due to {row[3]}")
 
         elif choice == "2":
             today_text = date.today().isoformat()
